@@ -1,4 +1,4 @@
-const path = ['.', '/', '..']
+const path = ['.', '/', '..', ':']
 
 function tokenizer(input) {
   // cursor
