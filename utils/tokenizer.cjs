@@ -7,9 +7,6 @@ function tokenizer(input) {
   //value
   let name = ''
 
-  // is name
-  let isName = true
-
   // tokens
   let tokens = []
 
