@@ -1,23 +1,43 @@
 import fs from 'fs'
+import tokenizer from './utils/tokenizer.cjs'
+import parser from './utils/parser.cjs'
+import generator from './utils/generator.cjs'
 
 // retrieve arguments from the command line
 const args = process.argv.slice(2)
 
-// example command : component --name=my-component --style=arrow --path=./components/my-component
+// example command : component --name=my-component --function=arrow --styling=module --path=./components/my-component
 
-// get the first argument
-const firstArg = args[0]
-const componentName = args[1].split('=')[1]
-const style = args[2].split('=')[1]
-const path = args[3].split('=')[1]
-console.log(path)
+const tokens = []
 
-const state = {
-  command: firstArg,
-  name: componentName,
-  style: style,
-  path: path,
-}
+args.forEach((arg) => {
+  // save to token
+  tokens.push(...tokenizer(arg))
+})
+
+//shift the first token
+const arg1 = tokens.shift()
+
+const parsedToken = parser(tokens, arg1)
+
+const state = {}
+
+// fill the state with the parsed token
+parsedToken.arguments.forEach((arg) => {
+  if (arg.type === 'name') {
+    state.name = arg.value
+  }
+  if (arg.type === 'path') {
+    state.path = arg.value
+  }
+  if (arg.type === 'function') {
+    state.function = arg.value
+  }
+  if (arg.type === 'styling') {
+    state.styling = arg.value
+  }
+})
+console.log(generator(state))
 
 // check if path is valid
 const checkPath = (path) => {
@@ -40,7 +60,7 @@ const createFile = (name, style, path) => {
 
   // write the file
   fs.writeFileSync(filePath, fileContent)
-  console.log(`File ${fileName} created`)
+  // console.log(`File ${fileName} created`)
 }
 
-checkPath(path)
+// checkPath(path)
